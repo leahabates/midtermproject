@@ -1,1 +1,108 @@
+<!DOCTYPE html>
+ <html>
+  <head>
+
+    <!-- meta for the browswer to allow for mobile first design-->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+   <title>Data Collector for AGOL</title>
+
+   <style>
+    html,
+    body,
+    #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+    }
+    /* match the style of record button */
+    .addRecordBtn {
+        position: absolute;
+        z-index: 10;
+        top: 10px;
+        right: 10px;
+        background-color: #ffffff;
+        color: rgb(62, 61, 61);
+        padding: 8px 16px;
+        border: none;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+}
+
+    .addRecordBtn:hover {
+        background-color: #ffffff;
+}
+   </style>
+   
+
+   <!-- importing the css and libares from esri.js-->
+   <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
+   <script src="https://js.arcgis.com/4.29/"></script>
+
+   <!-- loading the modules-->
+   <script>
+        require([ "esri/config","esri/Map",
+         "esri/views/MapView", 
+         "esri/widgets/Locate",
+         "esri/widgets/Search",
+         "esri/layers/FeatureLayer"
+        ], 
+         (esriConfig, Map, MapView, Locate, Search, FeatureLayer) => {
+
+            //adding in API key
+            esriConfig.apiKey= "AAPTxy8BH1VEsoebNVZXo8HurKfn8xs-sWsNswOMg-gicKExeOv8LqtW2-eXX8sChmQJp4x3jD2uBPHxjWmO3fI1MQBAVeBl6VrxvF186jjKmG_LWli4wZNwXUZORO17pGQ432BSycHoLd6yAMjl44SbH5qtpRSMS43nREA6-DFo9dMyy_DzxHf3sYdLtbNhLdppCmVwp9UZIU1M_c0_DFpQAWFVK3KWA6Z97IAm1mgtQ6S5dAkxc9iP5a1tZBiZY7vbAT1_gRtlmFxO";
+
+            const map = new Map ({
+                basemap: "satellite"
+            });
+
+            const view = new MapView ({
+                container: "viewDiv", //refrece to the DOM node that will contain the view
+                map: map,
+                center : [-74.0060, 40.7128], // NYC
+                zoom: 11
+            });
+
+            // location widget
+            const locateBtn =  new Locate ({
+                view : view
+            });
+
+        // add the locate widget to the left corner of view
+            view.ui.add(locateBtn, {
+                position: "top-left"
+                });
+            
+            // add a search widget 
+            const searchWidget = new Search ({
+                view : view
+            });
+
+        // add the search widget to the bottom of the view
+            view.ui.add(searchWidget,{
+                position: "bottom-left"
+            });
+
+            //create featurelayer from feature service
+            
+
+            //add the layer to map
+            map.add(layer);
+
+        });
+    </script>
+
+  </head>
+  <body>
+    <!-- adds the 'add record button and takes user to the survey'-->
+    
+
+    <div id="viewDiv"></div>
+   <!-- hello world text to check if everything worked -->
+
+  </body>
+</html>
 
