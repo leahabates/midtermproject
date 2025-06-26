@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 
-   <title>Data Collector for AGOL</title>
+   <title>Bird Log</title>
 
    <style>
     html,
@@ -17,7 +17,7 @@
         height: 100%;
         width: 100%;
     }
-    /* match the style of record button */
+
     .addRecordBtn {
         position: absolute;
         z-index: 10;
@@ -35,6 +35,42 @@
     .addRecordBtn:hover {
         background-color: #ffffff;
 }
+
+    .modal {
+        display: block; 
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.5);
+        font-family: Arial, sans-serif;
+}
+
+    .modal-content {
+        background-color: #fff;
+        margin: 20% auto;
+        padding: 20px;
+        border-radius: 12px;
+        width: 80%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+}
+    .close-button:hover {
+        color: #000;
+}
+
    </style>
    
 
@@ -48,9 +84,10 @@
          "esri/views/MapView", 
          "esri/widgets/Locate",
          "esri/widgets/Search",
+         "esri/widgets/Legend",
          "esri/layers/FeatureLayer"
         ], 
-         (esriConfig, Map, MapView, Locate, Search, FeatureLayer) => {
+         (esriConfig, Map, MapView, Locate, Search, Legend, FeatureLayer) => {
 
             //adding in API key
             esriConfig.apiKey= "AAPTxy8BH1VEsoebNVZXo8HurKfn8xs-sWsNswOMg-gicKExeOv8LqtW2-eXX8sChmQJp4x3jD2uBPHxjWmO3fI1MQBAVeBl6VrxvF186jjKmG_LWli4wZNwXUZORO17pGQ432BSycHoLd6yAMjl44SbH5qtpRSMS43nREA6-DFo9dMyy_DzxHf3sYdLtbNhLdppCmVwp9UZIU1M_c0_DFpQAWFVK3KWA6Z97IAm1mgtQ6S5dAkxc9iP5a1tZBiZY7vbAT1_gRtlmFxO";
@@ -62,18 +99,23 @@
             const view = new MapView ({
                 container: "viewDiv", //refrece to the DOM node that will contain the view
                 map: map,
-                center : [-74.0060, 40.7128], // NYC
-                zoom: 11
+                //center : [-74.0060, 40.7128], // NYC, maybe center around madison
+                zoom: 13
             });
 
             // location widget
             const locateBtn =  new Locate ({
-                view : view
+                view : view,
+                useHeadingEnabled: false,
+                goToOverrride: function(view, options){
+                    options.target.scale = 2500;
+                    return view.goTo(options.target)
+                }
             });
 
         // add the locate widget to the left corner of view
             view.ui.add(locateBtn, {
-                position: "bottom-left"
+                position: "top-left"
                 });
             
             // add a search widget 
@@ -83,14 +125,33 @@
 
         // add the search widget to the bottom of the view
             view.ui.add(searchWidget,{
-                position: "bottom-left"
+                position: "bottom-right"
+            });
+
+            //add legend widget
+            const legend = new Legend ({
+                view : view
+            });
+
+            // add to screen
+            // view.ui.add(legend, {
+            //     position: "bottom-right"
+            // });
+
+            view.when(()=>{
+                locateBtn.locate().catch((err)=>{
+                    console.warn("Couldn't Locate user", err)
+                });
             });
 
             //create featurelayer from feature service
-            
+            const layer = new FeatureLayer ({ 
+                // adding url 
+                url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_a3cf695961784f9aa1fd751fb62e48d5_results/FeatureServer"
+            });
 
             //add the layer to map
-            
+            map.add(layer);
 
         });
     </script>
@@ -98,11 +159,35 @@
   </head>
   <body>
     <!-- adds the 'add record button and takes user to the survey'-->
-     <a href=""target="_blank" class="addRecordBtn">Log</a>
+     <a href="https://arcg.is/00Hnm10"target="_blank" class="addRecordBtn">Log</a>
 
     <div id="viewDiv"></div>
-   <!-- hello world text to check if everything worked -->
-
+    <!-- Welcome Popup Modal -->
+    <div id="welcomeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Welcome to Bird Log!</h2>
+            <p>Track your bird sightings and explore what others have seen in your area.</p>
+        </div>
+    </div>
+    <script>
+        window.onload = function () {
+          const modal = document.getElementById("welcomeModal");
+          const closeBtn = document.querySelector(".close-button");
+    
+          closeBtn.onclick = function () {
+            modal.style.display = "none";
+          }
+    
+          window.onclick = function (event) {
+            if (event.target == modal) {
+              modal.style.display = "none";
+            }
+          }
+        }
+    </script>
+  
+ 
   </body>
 </html>
 
