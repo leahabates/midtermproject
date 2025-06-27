@@ -147,7 +147,21 @@
             //create featurelayer from feature service
             const layer = new FeatureLayer ({ 
                 // adding url 
-                url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_a3cf695961784f9aa1fd751fb62e48d5_results/FeatureServer"
+                url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_a3cf695961784f9aa1fd751fb62e48d5_results/FeatureServer",
+                outFields: ["*"],
+                popupTemplate: {
+                    title: "Bird Sighting: {what_bird_did_you_see}",
+                    content: `
+                    <strong>Species:</strong> {what_bird_did_you_see}<br>
+                    <strong>Number Observed:</strong> {how_many_did_you_see}<br>
+                    <strong>Habitat Type:</strong> {what_kind_of_habitat_was_it_in}<br>
+                    <strong>Other Habitat Notes:</strong> {other___what_kind_of_habitat_was_it_in}<br>
+                    <strong>Observer:</strong> {whats_your_name_or_initials}<br>
+                    <strong>Date & Time:</strong> {when_did_you_see_it}<br>"
+                    `
+                }
+
+
             });
 
             //add the layer to map
